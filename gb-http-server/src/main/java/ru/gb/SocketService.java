@@ -1,7 +1,7 @@
 package ru.gb;
 
-import ru.gb.logger.ConsoleLogger;
 import ru.gb.logger.Logger;
+import ru.gb.logger.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
@@ -11,15 +11,15 @@ import java.util.List;
 
 public class SocketService implements Closeable {
 
-    private static final Logger logger = new ConsoleLogger();
+    private static final Logger logger = LoggerFactory.create("CONSOLE");
     private final Socket socket;
 
-    public Socket getSocket() {
-        return socket;
+    private SocketService(Socket socket) {
+        this.socket = socket;
     }
 
-    public SocketService(Socket socket) {
-        this.socket = socket;
+    public static SocketService createSocketService(Socket socket) {
+        return new SocketService(socket);
     }
 
     public List<String> readRequest() {

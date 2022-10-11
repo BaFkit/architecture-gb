@@ -2,29 +2,26 @@ package ru.gb.domain;
 
 import ru.gb.ResponseSerializer;
 
+import java.io.Reader;
+
 public class HttpResponse implements ResponseSerializer {
 
     private int statusCode;
 
-    private String body;
+    private Reader body;
 
     public int getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public String getBody() {
+    public Reader getBody() {
         return body;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    private HttpResponse() {
     }
 
-    public HttpResponse(int statusCode, String body) {
+    private HttpResponse(int statusCode, Reader body) {
         this.statusCode = statusCode;
         this.body = body;
     }
@@ -43,5 +40,32 @@ public class HttpResponse implements ResponseSerializer {
                     "\n";
         }
         return null;
+    }
+
+    public static Builder createBuilder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private final HttpResponse httpResponse;
+
+        private Builder() {
+            this.httpResponse = new HttpResponse();
+        }
+
+        public Builder withStatusCode(int statusCode) {
+            this.httpResponse.statusCode = statusCode;
+            return this;
+        }
+
+        public Builder withBody(Reader body) {
+            this.httpResponse.body = body;
+            return this;
+        }
+
+        public HttpResponse build() {
+            return this.httpResponse;
+        }
     }
 }
