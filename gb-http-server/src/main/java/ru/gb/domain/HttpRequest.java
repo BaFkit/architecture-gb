@@ -1,21 +1,24 @@
 package ru.gb.domain;
 
-import ru.gb.RequestParser;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class HttpRequest implements RequestParser {
+public class HttpRequest {
 
-    private String method;
+    private final String method;
 
-    private String path;
+    private final String path;
 
-    private HttpRequest() {
-    }
+    private final Map<String, String> headers;
 
-    private HttpRequest(String method, String path) {
+    private final String body;
+
+    private HttpRequest(String method, String path, Map<String, String> headers, String body) {
         this.method = method;
         this.path = path;
+        this.headers = headers;
+        this.body = body;
     }
 
     public String getMethod() {
@@ -26,10 +29,12 @@ public class HttpRequest implements RequestParser {
         return path;
     }
 
-    @Override
-    public HttpRequest parse(List<String> rawRequest) {
-        String[] parts = rawRequest.get(0).split(" ");
-        return new HttpRequest(parts[0], parts[1]);
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public String getBody() {
+        return body;
     }
 
     public static Builder createBuilder() {
@@ -38,23 +43,41 @@ public class HttpRequest implements RequestParser {
 
     public static class Builder {
 
-       private final HttpRequest httpRequest;
+        private String method;
+
+        private String path;
+
+        private final Map<String, String> headers = new HashMap<>();
+
+        private String body;
 
        private Builder() {
-           this.httpRequest = new HttpRequest();
        }
 
        public Builder withMethod(String method) {
-           this.httpRequest.method = method;
+           this.method = method;
            return this;
        }
        public Builder withPath(String path) {
-           this.httpRequest.path = path;
+           this.path = path;
+           return this;
+       }
+       public Builder withHeader(String header, String value) {
+           System.out.println(header + " --- " + value);
+           this.headers.put(header, value);
+           return this;
+       }
+       public Builder withHeaders(Map<String, String> headers) {
+           this.headers.putAll(headers);
+           return this;
+       }
+       public Builder withBody(String body) {
+           this.body = body;
            return this;
        }
 
        public HttpRequest build() {
-           return this.httpRequest;
+           return new HttpRequest(method, path, headers, body);
        }
     }
 }
