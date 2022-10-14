@@ -1,45 +1,29 @@
 package ru.gb.domain;
 
-import ru.gb.ResponseSerializer;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.io.Reader;
+public class HttpResponse {
 
-public class HttpResponse implements ResponseSerializer {
+    private ResponseCode statusCode;
 
-    private int statusCode;
+    private Map<String, String> headers;
 
-    private Reader body;
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public Reader getBody() {
-        return body;
-    }
+    private String body;
 
     private HttpResponse() {
     }
 
-    private HttpResponse(int statusCode, Reader body) {
-        this.statusCode = statusCode;
-        this.body = body;
+    public ResponseCode getStatusCode() {
+        return statusCode;
     }
 
-    @Override
-    public String serialize(HttpResponse httpResponse) {
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
 
-        if(httpResponse.getStatusCode() == 404) {
-            return  "HTTP/1.1 404 NOT_FOUND\n" +
-                    "Content-Type: text/html; charset=utf-8\n" +
-                    "\n";
-        }
-        if(httpResponse.getStatusCode() == 200) {
-            return "HTTP/1.1 200 OK\n" +
-                    "Content-Type: text/html; charset=utf-8\n" +
-                    "\n";
-        }
-        return null;
+    public String getBody() {
+        return body;
     }
 
     public static Builder createBuilder() {
@@ -52,19 +36,30 @@ public class HttpResponse implements ResponseSerializer {
 
         private Builder() {
             this.httpResponse = new HttpResponse();
+            this.httpResponse.headers = new HashMap<>();
         }
 
-        public Builder withStatusCode(int statusCode) {
+        public Builder withStatusCode(ResponseCode statusCode) {
             this.httpResponse.statusCode = statusCode;
             return this;
         }
-
-        public Builder withBody(Reader body) {
+        public Builder withHeader(String header, String value) {
+            this.httpResponse.headers.put(header, value);
+            return this;
+        }
+        public Builder withHeaders(Map<String, String> headers) {
+            this.httpResponse.headers.putAll(headers);
+            return this;
+        }
+        public Builder withBody(String body) {
             this.httpResponse.body = body;
             return this;
         }
 
         public HttpResponse build() {
+            if (this.httpResponse.statusCode == null) {
+                throw new IllegalArgumentException("Status is obligatory for Response");
+            }
             return this.httpResponse;
         }
     }

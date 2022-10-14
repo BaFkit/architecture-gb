@@ -2,11 +2,14 @@ package ru.gb.logger;
 
 public class LoggerFactory {
 
-    public static Logger create(String loggerType) {
+    public static Logger create(LoggerTypes loggerType) {
+
         switch (loggerType) {
-            case "CONSOLE":
+            case CONSOLE:
                 return new ConsoleLogger();
-            case "FILE":
+            case IMPROVED_CONSOLE:
+                return new ImprovedConsoleLogger(new ConsoleLogger());
+            case FILE:
                 return new FileLogger();
             default:
                 throw new IllegalArgumentException("Unknown type");

@@ -1,32 +1,29 @@
-package ru.gb;
+package ru.gb.service;
 
 import ru.gb.logger.Logger;
 import ru.gb.logger.LoggerFactory;
+import ru.gb.logger.LoggerTypes;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Deque;
+import java.util.LinkedList;
 
-public class SocketService implements Closeable {
+class SocketServiceImpl implements SocketService {
 
-    private static final Logger logger = LoggerFactory.create("CONSOLE");
+    private static final Logger logger = LoggerFactory.create(LoggerTypes.IMPROVED_CONSOLE);
     private final Socket socket;
 
-    private SocketService(Socket socket) {
+    SocketServiceImpl(Socket socket) {
         this.socket = socket;
     }
 
-    public static SocketService createSocketService(Socket socket) {
-        return new SocketService(socket);
-    }
-
-    public List<String> readRequest() {
+    public Deque<String> readRequest() {
         try {
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
             while (!input.ready()) ;
-            List<String> request = new ArrayList<>();
+            Deque<String> request = new LinkedList<>();
             while (input.ready()) {
                 String line = input.readLine();
                 logger.info(line);
@@ -38,13 +35,10 @@ public class SocketService implements Closeable {
         }
     }
 
-    public void writeResponse(String headers, Reader reader) {
+    public void writeResponse(String rawResponse) {
         try {
             PrintWriter output = new PrintWriter(socket.getOutputStream());
-            output.print(headers);
-            if ( reader != null) {
-                reader.transferTo(output);
-            }
+            output.print(rawResponse);
             output.flush();
         } catch (IOException ex) {
             throw new IllegalStateException(ex);
