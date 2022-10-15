@@ -2,12 +2,12 @@ package ru.gb;
 
 import ru.gb.config.Config;
 import ru.gb.config.ConfigFactory;
+import ru.gb.handler.MethodHandlerFactory;
+import ru.gb.handler.RequestHandler;
 import ru.gb.logger.LoggerTypes;
 import ru.gb.logger.Logger;
 import ru.gb.logger.LoggerFactory;
-import ru.gb.service.RequestParserFactory;
-import ru.gb.service.ResponseSerializerFactory;
-import ru.gb.service.SocketServiceFactory;
+import ru.gb.service.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -23,12 +23,14 @@ public class WebServer {
             while (true) {
                 logger.info("New client connected!");
 
+                      SocketService socketService = SocketServiceFactory.createSocketService(serverSocket.accept());
+                      ResponseSerializer responseSerializer = ResponseSerializerFactory.createResponseSerializer();
+
                 new Thread(new RequestHandler(
-                        config,
-                        SocketServiceFactory.createSocketService(serverSocket.accept()),
+                        socketService,
                         RequestParserFactory.createRequestParser(),
-                        ResponseSerializerFactory.createResponseSerializer()))
-                        .start();
+                        MethodHandlerFactory.create(socketService, responseSerializer, config))
+                ).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
