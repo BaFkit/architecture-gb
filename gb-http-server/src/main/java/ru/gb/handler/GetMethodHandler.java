@@ -12,11 +12,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class GetMethodHandler extends MethodHandler{
+@Handler(order = 0, method = "GET")
+public class GetMethodHandler extends MethodHandler {
 
-    @Handler(order = 0)
-    public GetMethodHandler(String method, MethodHandler next, ResponseSerializer responseSerializer, SocketService socketService, Config config) {
-        super(method, next, responseSerializer, socketService, config);
+    public GetMethodHandler(String method, MethodHandler next, SocketService socketService, ResponseSerializer responseSerializer, Config config) {
+        super(method, next, socketService, responseSerializer, config);
     }
 
     @Override

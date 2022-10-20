@@ -14,7 +14,7 @@ public class UserRepository {
     public UserRepository(Connection connection) {
         this.connection = connection;
         this.mapper = new UserMapper(connection);
-        this.unitOfWork = new UnitOfWork(connection);
+        this.unitOfWork = new UnitOfWork(mapper);
     }
 
     public Optional<User> findById(long id) {
@@ -22,7 +22,7 @@ public class UserRepository {
     }
 
     public void beginTransaction() {
-        this.unitOfWork = new UnitOfWork(connection);
+        this.unitOfWork = new UnitOfWork(mapper);
     }
 
     public void insert(User user) {

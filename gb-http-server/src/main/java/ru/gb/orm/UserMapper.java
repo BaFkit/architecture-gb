@@ -13,6 +13,9 @@ public class UserMapper {
     private final Connection connection;
 
     private final PreparedStatement selectUser;
+    private final PreparedStatement insertUser;
+    private final PreparedStatement updateUser;
+    private final PreparedStatement deleteUser;
 
     private final Map<Long, User> identityMap = new HashMap<>();
 
@@ -20,8 +23,11 @@ public class UserMapper {
         this.connection = connection;
         try {
             this.selectUser = connection.prepareStatement("select id, username, password from users where id = ?;");
+            this.insertUser = connection.prepareStatement("insert into users (id, username, password) values (?, ?, ?);");
+            this.updateUser = connection.prepareStatement("update users set id = ?, username = ?, password = ? where id = ?;");
+            this.deleteUser = connection.prepareStatement("delete from users where id = ?;");
         } catch (SQLException e) {
-            throw  new IllegalStateException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -42,5 +48,37 @@ public class UserMapper {
             throw new IllegalStateException(e);
         }
         return Optional.empty();
+    }
+
+    public void insert(User user) {
+        try {
+            insertUser.setLong(1, user.getId());
+            insertUser.setString(2, user.getLogin());
+            insertUser.setString(3, user.getPassword());
+            insertUser.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void update(User user) {
+        try {
+            updateUser.setLong(1, user.getId());
+            updateUser.setString(2, user.getLogin());
+            updateUser.setString(3, user.getPassword());
+            updateUser.setLong(4, user.getId());
+            updateUser.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(User user) {
+        try {
+            deleteUser.setLong(1, user.getId());
+            deleteUser.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

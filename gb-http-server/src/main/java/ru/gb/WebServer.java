@@ -2,7 +2,7 @@ package ru.gb;
 
 import ru.gb.config.Config;
 import ru.gb.config.ConfigFactory;
-import ru.gb.handler.MethodHandlerFactory;
+import ru.gb.handler.AnnotatedHandlerFactory;
 import ru.gb.handler.RequestHandler;
 import ru.gb.logger.LoggerTypes;
 import ru.gb.logger.Logger;
@@ -29,7 +29,7 @@ public class WebServer {
                 new Thread(new RequestHandler(
                         socketService,
                         RequestParserFactory.createRequestParser(),
-                        MethodHandlerFactory.create(socketService, responseSerializer, config))
+                        AnnotatedHandlerFactory.create(socketService, responseSerializer, config))
                 ).start();
             }
         } catch (IOException e) {

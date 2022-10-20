@@ -1,19 +1,18 @@
 package ru.gb.orm;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UnitOfWork {
 
-    private final Connection connection;
+    private final UserMapper userMapper;
 
     private final List<User> newUsers = new ArrayList<>();
     private final List<User> updateUsers = new ArrayList<>();
     private final List<User> deleteUsers = new ArrayList<>();
 
-    public UnitOfWork(Connection connection) {
-        this.connection = connection;
+    public UnitOfWork(UserMapper userMapper) {
+        this.userMapper = userMapper;
     }
 
     public void registerNew(User user) {
@@ -27,19 +26,29 @@ public class UnitOfWork {
     public void registerDelete(User user) {
         this.deleteUsers.add(user);
     }
-    
+
     public void commit() {
         insert();
         update();
         delete();
-    }
-
-    private void update() {
+        clear();
     }
 
     private void insert() {
+        newUsers.forEach(user -> userMapper.insert(user));
+    }
+
+    private void update() {
+        updateUsers.forEach(user -> userMapper.update(user));
     }
 
     private void delete() {
+        deleteUsers.forEach(user -> userMapper.delete(user));
+    }
+
+    private void clear() {
+        this.newUsers.clear();
+        this.updateUsers.clear();
+        this.deleteUsers.clear();
     }
 }
