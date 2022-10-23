@@ -22,10 +22,8 @@ public class WebServer {
             logger.info("Server started at port: " + config.getPort());
             while (true) {
                 logger.info("New client connected!");
-
                       SocketService socketService = SocketServiceFactory.createSocketService(serverSocket.accept());
                       ResponseSerializer responseSerializer = ResponseSerializerFactory.createResponseSerializer();
-
                 new Thread(new RequestHandler(
                         socketService,
                         RequestParserFactory.createRequestParser(),
