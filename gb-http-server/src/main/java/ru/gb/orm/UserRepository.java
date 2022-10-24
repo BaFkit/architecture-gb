@@ -1,6 +1,7 @@
 package ru.gb.orm;
 
 import java.sql.Connection;
+import java.util.List;
 import java.util.Optional;
 
 public class UserRepository {
@@ -19,6 +20,10 @@ public class UserRepository {
 
     public Optional<User> findById(long id) {
         return mapper.findById(id);
+    }
+
+    public List<User> findAll() {
+        return mapper.findAll();
     }
 
     public void beginTransaction() {

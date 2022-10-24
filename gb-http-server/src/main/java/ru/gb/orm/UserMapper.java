@@ -4,15 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class UserMapper {
 
     private final Connection connection;
 
     private final PreparedStatement selectUser;
+    private final PreparedStatement selectUserAll;
     private final PreparedStatement insertUser;
     private final PreparedStatement updateUser;
     private final PreparedStatement deleteUser;
@@ -23,6 +22,7 @@ public class UserMapper {
         this.connection = connection;
         try {
             this.selectUser = connection.prepareStatement("select id, username, password from users where id = ?;");
+            this.selectUserAll = connection.prepareStatement("select * from users");
             this.insertUser = connection.prepareStatement("insert into users (id, username, password) values (?, ?, ?);");
             this.updateUser = connection.prepareStatement("update users set id = ?, username = ?, password = ? where id = ?;");
             this.deleteUser = connection.prepareStatement("delete from users where id = ?;");
@@ -48,6 +48,19 @@ public class UserMapper {
             throw new IllegalStateException(e);
         }
         return Optional.empty();
+    }
+
+    public List<User> findAll() {
+        List<User> users = new ArrayList<>();
+        try {
+            ResultSet rs = selectUserAll.executeQuery();
+            while (rs.next()) {
+                users.add(new User(rs.getInt(1), rs.getString(2), rs.getString(3)));
+            }
+            return users;
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public void insert(User user) {
