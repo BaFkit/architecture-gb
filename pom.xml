@@ -17,6 +17,7 @@
 
     <modules>
         <module>gb-http-server</module>
+        <module>gb-consolidation</module>
     </modules>
 
 </project>
