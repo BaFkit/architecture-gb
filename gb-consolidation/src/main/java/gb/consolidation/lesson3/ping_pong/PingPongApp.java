@@ -1,4 +1,4 @@
-package gb.consolidation.lesson3;
+package gb.consolidation.lesson3.ping_pong;
 
 public class PingPongApp {
 
