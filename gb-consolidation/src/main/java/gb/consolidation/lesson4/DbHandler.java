@@ -110,8 +110,8 @@ public class DbHandler {
         public void printFilmBreaks() throws SQLException {
             statement = connection.createStatement();
             statement.execute("DROP TABLE IF EXISTS breaks");
-            statement.execute("CREATE TABLE IF NOT EXISTS breaks (id INTEGER PRIMARY KEY AUTOINCREMENT, film_name TEXT, " +
-                    "start_time_h TEXT, start_time_m, TEXT, duration INTEGER, " +
+            statement.execute("CREATE TABLE IF NOT EXISTS breaks (id INTEGER PRIMARY KEY, film_name TEXT, " +
+                    "start_time_h TEXT, start_time_m TEXT, duration INTEGER, " +
                     "next_film_start_h TEXT, next_film_start_m TEXT, break INTEGER);");
 
             int endTime = 0;
@@ -125,7 +125,7 @@ public class DbHandler {
             int duration = 0;
             resultSet = statement.executeQuery("SELECT name, duration, start_time_h, start_time_m FROM " +
                     "films LEFT JOIN durations ON film.duration_id = durations.id " +
-                    "LEFT JOIN timetable ON films.id = timetable.film_id PRDER BY next_film_start_h, next_film_start_m");
+                    "LEFT JOIN timetable ON films.id = timetable.film_id ORDER BY next_film_start_h, next_film_start_m");
 
             while (resultSet.next()) {
                 count++;
@@ -140,7 +140,7 @@ public class DbHandler {
                     nextFilmStartM = resultSet.getString("start_time_m");
                     breakFilm = Integer.parseInt(startTimeH)*60 + Integer.parseInt(startTimeM) - endTime;
 
-                    String prepIns = "INSERT INTO breaks(film_name, start_time_h, start_time_m, duration, next_film_start_h, next_film_start_m, break)";
+                    String prepIns = "INSERT INTO breaks(film_name, start_time_h, start_time_m, duration, next_film_start_h, next_film_start_m, break) VALUES (?, ?, ?, ?, ?, ?, ?);";
                     PreparedStatement ps = connection.prepareStatement(prepIns);
                     ps.setString(1, filmName);
                     ps.setString(2, startTimeH);
@@ -162,7 +162,7 @@ public class DbHandler {
             resultSet = statement.executeQuery("SELECT * FROM breaks ORDER BY break");
             while (resultSet.next()) {
                 System.out.println(resultSet.getInt(1) + "  " + resultSet.getString(2) + "  " + resultSet.getString(3) + "  " + resultSet.getString(4) +
-                        "      " + resultSet.getInt(5) + "       " + resultSet.getString(6) + ":" resultSet.getString(7) +
+                        "      " + resultSet.getInt(5) + "       " + resultSet.getString(6) + ":" + resultSet.getString(7) +
                         resultSet.getInt(8));
             }
     }
