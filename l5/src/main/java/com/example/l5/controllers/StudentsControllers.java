@@ -44,7 +44,7 @@ public class StudentsControllers {
     }
 
     @PutMapping
-    public StudentDto supdateStudent(@RequestBody StudentDto studentDto) {
+    public StudentDto updateStudent(@RequestBody StudentDto studentDto) {
         Student student = studentsServices.update(studentDto);
         return studentsConverter.entityToDto(student);
     }
