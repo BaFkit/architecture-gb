@@ -1,0 +1,49 @@
+<!doctype html>
+
+<html ng-app="l7">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
+    <script src="index.js"></script>
+</head>
+
+<body>
+
+<div class="container" ng-controller="indexController">
+    <h3>Students list</h3>
+    <table class="table table-hover">
+        <tr>
+            <td>ID</td>
+            <td>Name</td>
+            <td>Age</td>
+        </tr>
+        <tbody>
+        <tr ng-repeat="s in StudentsList">
+            <td>{{s.id}}</td>
+            <td>{{s.name}}</td>
+            <td>{{s.age}}</td>
+            <td>
+                <button class="btn btn-danger" ng-click="deleteStudent(s.id)">Exclude</button>
+                <button class="btn btn-primary" ng-click="updateStudent(s.id)">Update</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <form ng-submit="addNewStudent()">
+        <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Name" ng-model="newStudent.name">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Age" ng-model="newStudent.age">
+        </div>
+        <button type="submit" class="btn btn-primary">Add new student</button>
+    </form>
+
+</div>
+</body>
+</html>
